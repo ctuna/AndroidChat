@@ -8,6 +8,7 @@
     tools:context=".MainActivity" >
 
     <TextView
+        android:layout_weight=".5"
         android:id="@+id/incoming_message"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -16,10 +17,20 @@
         android:text="Blank" />
 
     <Button
+        android:layout_weight=".25"
         android:id="@+id/send_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="send message"
         android:layout_below="@id/incoming_message" />
+    
+    
+    <Button
+        android:layout_weight=".25"
+        android:id="@+id/receive_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="read message"
+        android:layout_below="@id/send_button" />
 
 </RelativeLayout>
