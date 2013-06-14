@@ -705,13 +705,13 @@ public class MainActivity extends Activity {
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
 				if (readMessage.equals("blue")){
-					incomingMessage.setText(readMessage);
 					incomingMessage.setTextColor(getResources().getColor(R.color.sky_light));
 				}
 				if (readMessage.equals("orange")){
-					incomingMessage.setText(readMessage);
+					
 					incomingMessage.setTextColor(getResources().getColor(R.color.tangerine_light));
 				}
+				incomingMessage.setText(readMessage);
 				break;
 
 			}
