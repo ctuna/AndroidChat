@@ -1,29 +1,64 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:layout_margin="20dp"
     android:gravity="center"
-    android:layout_marginLeft="10dp"
+    android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:layout_weight=".5"
+   
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width = "fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".25">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Goggles say: "
+            android:textColor="@android:color/darker_gray"
+            android:textSize="50sp" />
+
+        <TextView
         android:id="@+id/incoming_message"
+        android:layout_marginLeft="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:textSize="40sp"
-        android:text="Blank" />
+        android:textSize="50sp"
+        android:text="" />
+	</LinearLayout>
+    
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width = "fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75">
     <Button
-        android:layout_weight=".25"
-        android:id="@+id/send_button"
+        android:id="@+id/blue_button"
+        android:layout_marginRight="10dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="send message"
-        android:layout_below="@id/incoming_message" />
+        android:layout_height="fill_parent"
+        android:layout_weight=".25"
+        android:background="@color/sky"
+        android:text="" />
+   
+    <Button
+        android:id="@+id/orange_button"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight=".25"
+        android:background="@color/tangerine"
+        android:text="" />
+        
+    </LinearLayout>
     
 
 
-</RelativeLayout>
+</LinearLayout>
