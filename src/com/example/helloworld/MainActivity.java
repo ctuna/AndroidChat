@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 	Button blueButton;
 	Button orangeButton;
 	BluetoothSocket mmSocket = null;
-	Boolean arduino = true;
+	Boolean arduino = false;
 	private boolean taskComplete = false;
 	// private static final UUID MY_UUID =
 	// UUID.fromString("00001105-0000-1000-8000-00805F9B34FB");
@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
 	private static final String DROIDX = "cdma_shadow";
 	private static final String GOGGLES = "limo";
 	private static final String NEXUS = "grouper";
+	private static final String GLASS = "glass-1";
 
 	private String currentDevice;
 
@@ -80,7 +81,7 @@ public class MainActivity extends Activity {
 
 	public int messageIndex = 0;
 	public boolean isPhone = true;
-
+	public boolean isServer = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,6 +92,7 @@ public class MainActivity extends Activity {
 
 		if (currentDevice.equals("Goggles")) {
 			setContentView(R.layout.goggles_main);
+			
 		} else {
 			setContentView(R.layout.activity_main);
 		}
@@ -121,14 +123,16 @@ public class MainActivity extends Activity {
 		deviceAddresses[ARDUINO_INDEX] = "00:A0:96:13:58:5E";
 		ensureDiscoverable();
 
-	
+		
 		if (deviceType.equals(DROIDX)) {
 			currentDevice = "DroidX";
+			isServer=true;
 			connectionAddress = deviceAddresses[GOGGLES_INDEX];
 			initiateSocketServer();
 		}
 		if (deviceType.equals(NEXUS)) {
 			currentDevice = "Nexus";
+			isServer=true;
 			connectionAddress = deviceAddresses[GOGGLES_INDEX];
 			if (D)
 				Log.i("debugging", "connecting to address: "
@@ -138,6 +142,8 @@ public class MainActivity extends Activity {
 		if (deviceType.equals(GOGGLES)) {
 			if (arduino){
 				connectionAddress = deviceAddresses[ARDUINO_INDEX];
+				TextView whoSays=(TextView)findViewById(R.id.who_says);
+				whoSays.setText("Arduino says:");
 			}
 			else {
 				connectionAddress = deviceAddresses[NEXUS_INDEX];
@@ -146,6 +152,18 @@ public class MainActivity extends Activity {
 			if (D)
 				Log.i("debugging", "connecting to address: "
 						+ connectionAddress);
+			initiateClient();
+		}
+		if (deviceType.equals(GLASS)){
+			if (D)
+				Log.i("debugging", "device type is glass");
+			currentDevice = "Glass";
+			if (arduino){
+				connectionAddress = deviceAddresses[ARDUINO_INDEX];
+			}
+			else {
+				connectionAddress = deviceAddresses[NEXUS_INDEX];
+			}
 			initiateClient();
 		}
 
@@ -708,7 +726,6 @@ public class MainActivity extends Activity {
 					incomingMessage.setTextColor(getResources().getColor(R.color.sky_light));
 				}
 				if (readMessage.equals("orange")){
-					
 					incomingMessage.setTextColor(getResources().getColor(R.color.tangerine_light));
 				}
 				incomingMessage.setText(readMessage);
@@ -756,12 +773,14 @@ public class MainActivity extends Activity {
 	
 	
     private void ensureDiscoverable() {
+    	if (isServer){
         if(D) Log.i("debugging", "ensure discoverable");
         if (mBluetoothAdapter.getScanMode() !=
             BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
+        }
         }
     }
 
