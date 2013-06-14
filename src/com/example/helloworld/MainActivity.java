@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
+//import com.example.android.BluetoothChat.BluetoothChatService.AcceptThread;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -615,6 +617,8 @@ public class MainActivity extends Activity {
 							.sendToTarget();
 				} catch (IOException e) {
 					Log.i("debugging", "disconnected", e);
+					//restartConnection();
+					//make a Toast that says connection is lost 
 					// connectionLost();
 					// Start the service over to restart listening mode
 					// BluetoothChatService.this.start();
@@ -654,6 +658,26 @@ public class MainActivity extends Activity {
 			 */
 		}
 	}
+    /**
+     * Start the chat service. Specifically start AcceptThread to begin a
+     * session in listening (server) mode. Called by the Activity onResume() */
+    public synchronized void restartConnection() {
+        if (D) Log.i("debugging", "restarting connection");
+
+        // Cancel any thread attempting to make a connection
+        if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+
+        // Cancel any thread currently running a connection
+        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+
+
+        // Start the thread to listen on a BluetoothServerSocket
+        if (mAcceptThread == null) {
+            mAcceptThread = new AcceptThread();
+            mAcceptThread.start();
+        }
+    }
+
 
 	// The Handler that gets information back from the BluetoothChatService
 	private final Handler mHandler = new Handler() {
