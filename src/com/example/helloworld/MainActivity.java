@@ -138,6 +138,8 @@ public class MainActivity extends Activity {
 		if (deviceType.equals(GOGGLES)) {
 			if (arduino){
 				connectionAddress = deviceAddresses[ARDUINO_INDEX];
+				TextView whoSays=(TextView)findViewById(R.id.who_says);
+				whoSays.setText("Arduino says:");
 			}
 			else {
 				connectionAddress = deviceAddresses[NEXUS_INDEX];
