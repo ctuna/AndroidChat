@@ -112,16 +112,9 @@ public class MainActivity extends Activity {
 		deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
 		deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
 
-		Intent discoverableIntent = new Intent(
-				BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-		discoverableIntent.putExtra(
-				BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 1000);
+		ensureDiscoverable();
 
-		if (!mBluetoothAdapter.isDiscovering()) {
-			if (D)
-				Log.i("debugging", "didn't discovery again");
-			startActivity(discoverableIntent);
-		}
+	
 		if (deviceType.equals(DROIDX)) {
 			currentDevice = "DroidX";
 			connectionAddress = deviceAddresses[GOGGLES_INDEX];
@@ -381,15 +374,30 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 
 		 if (mReceiver!=null) unregisterReceiver(mReceiver);
-
 		if (mmSocket != null) {
 			try {
 				mmSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+
+	    /**
+	     * Stop all threads
+	     */
+
+	        if (mConnectThread != null) {
+	            mConnectThread.cancel();
+	            mConnectThread = null;
+	        }
+
+	        if (mConnectedThread != null) {
+	            mConnectedThread.cancel();
+	            mConnectedThread = null;
+	        }
+
+	       
+	    
 	}
 
 	private class AcceptThread extends Thread {
@@ -688,7 +696,6 @@ public class MainActivity extends Activity {
 	 *            The BluetoothSocket on which the connection was made
 	 */
 	public synchronized void connected(BluetoothSocket socket) {
-
 		// Cancel the thread that completed the connection
 		if (mConnectThread != null) {
 			mConnectThread.cancel();
@@ -714,5 +721,16 @@ public class MainActivity extends Activity {
 			Log.i("debugging", "Starting connected thread");
 		mConnectedThread.start();
 	}
+	
+	
+    private void ensureDiscoverable() {
+        if(D) Log.i("debugging", "ensure discoverable");
+        if (mBluetoothAdapter.getScanMode() !=
+            BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+    }
 
 }
