@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
 	Button blueButton;
 	Button orangeButton;
 	BluetoothSocket mmSocket = null;
+	Boolean arduino = true;
 	private boolean taskComplete = false;
 	// private static final UUID MY_UUID =
 	// UUID.fromString("00001105-0000-1000-8000-00805F9B34FB");
@@ -73,6 +74,7 @@ public class MainActivity extends Activity {
 	private static final int LAPTOP_INDEX = 0;
 	private static final int DROIDX_INDEX = 1;
 	private static final int GOGGLES_INDEX = 2;
+	private static final int ARDUINO_INDEX=3;
 	private static final int NEXUS_INDEX = 6;
 	private String connectionAddress;
 
@@ -82,8 +84,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (D)
+			Log.i("debugging", "CURRENT DEVICE IS: "+ android.os.Build.DEVICE);
 		enableBlueTooth();
 		registerDevices();
+
 		if (currentDevice.equals("Goggles")) {
 			setContentView(R.layout.goggles_main);
 		} else {
@@ -113,7 +118,7 @@ public class MainActivity extends Activity {
 		deviceAddresses[DROIDX_INDEX] = "D0:37:61:40:1F:F2";
 		deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
 		deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
-
+		deviceAddresses[ARDUINO_INDEX] = "00:A0:96:13:58:5E";
 		ensureDiscoverable();
 
 	
@@ -131,14 +136,17 @@ public class MainActivity extends Activity {
 			initiateSocketServer();
 		}
 		if (deviceType.equals(GOGGLES)) {
+			if (arduino){
+				connectionAddress = deviceAddresses[ARDUINO_INDEX];
+			}
+			else {
+				connectionAddress = deviceAddresses[NEXUS_INDEX];
+			}
 			currentDevice = "Goggles";
-			// connectionAddress = deviceAddresses[DROIDX_INDEX];
-			connectionAddress = deviceAddresses[NEXUS_INDEX];
 			if (D)
 				Log.i("debugging", "connecting to address: "
 						+ connectionAddress);
 			initiateClient();
-			// connectionAddress = deviceAddresses[LAPTOP_INDEX];
 		}
 
 	}
