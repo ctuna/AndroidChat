@@ -115,24 +115,18 @@ public class MainActivity extends Activity {
 		Log.i("debugging", "connected thread running");
 	}
 
-	public void registerDevices() {
-		deviceAddresses[LAPTOP_INDEX] = "E4:CE:8F:37:44:4F";
-		deviceAddresses[DROIDX_INDEX] = "D0:37:61:40:1F:F2";
-		deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
-		deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
-		deviceAddresses[ARDUINO_INDEX] = "00:A0:96:13:58:5E";
-		ensureDiscoverable();
-
-		
+	public void start(){
 		if (deviceType.equals(DROIDX)) {
 			currentDevice = "DroidX";
-			isServer=true;
+			//make sure server is visible
+			ensureDiscoverable();
 			connectionAddress = deviceAddresses[GOGGLES_INDEX];
 			initiateSocketServer();
 		}
 		if (deviceType.equals(NEXUS)) {
 			currentDevice = "Nexus";
-			isServer=true;
+			//make sure server is visible
+			ensureDiscoverable();
 			connectionAddress = deviceAddresses[GOGGLES_INDEX];
 			if (D)
 				Log.i("debugging", "connecting to address: "
@@ -166,6 +160,18 @@ public class MainActivity extends Activity {
 			}
 			initiateClient();
 		}
+	}
+	
+	public void registerDevices() {
+		deviceAddresses[LAPTOP_INDEX] = "E4:CE:8F:37:44:4F";
+		deviceAddresses[DROIDX_INDEX] = "D0:37:61:40:1F:F2";
+		deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
+		deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
+		deviceAddresses[ARDUINO_INDEX] = "00:A0:96:13:58:5E";
+	
+
+		start();
+		
 
 	}
 
@@ -606,6 +612,7 @@ public class MainActivity extends Activity {
 		private final OutputStream mmOutStream;
 
 		public ConnectedThread(BluetoothSocket socket) {
+			mConnectedThread = this;
 			mmSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -643,7 +650,7 @@ public class MainActivity extends Activity {
 							.sendToTarget();
 				} catch (IOException e) {
 					Log.i("debugging", "disconnected", e);
-					//restartConnection();
+					restartConnection();
 					//make a Toast that says connection is lost 
 					// connectionLost();
 					// Start the service over to restart listening mode
@@ -688,7 +695,7 @@ public class MainActivity extends Activity {
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume() */
     public synchronized void restartConnection() {
-        if (D) Log.i("debugging", "restarting connection");
+        if (D) Log.i("debugging", "restarting connection (doesn't make sense");
 
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
@@ -697,11 +704,8 @@ public class MainActivity extends Activity {
         if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
 
-        // Start the thread to listen on a BluetoothServerSocket
-        if (mAcceptThread == null) {
-            mAcceptThread = new AcceptThread();
-            mAcceptThread.start();
-        }
+        // Start the whole dance over again
+        start();
     }
 
 
@@ -773,14 +777,14 @@ public class MainActivity extends Activity {
 	
 	
     private void ensureDiscoverable() {
-    	if (isServer){
+  
         if(D) Log.i("debugging", "ensure discoverable");
         if (mBluetoothAdapter.getScanMode() !=
             BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 1000);
             startActivity(discoverableIntent);
-        }
+        
         }
     }
 
