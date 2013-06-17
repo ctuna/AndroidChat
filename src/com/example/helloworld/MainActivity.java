@@ -112,52 +112,14 @@ public class MainActivity extends Activity {
 
 	public void startConnectionThread() {
 		connectedThread = new ConnectedThread(mmSocket);
-		Log.i("debugging", "connected thread running");
 	}
 
 	public void start(){
-		if (deviceType.equals(DROIDX)) {
-			currentDevice = "DroidX";
-			//make sure server is visible
+		if (isServer){
 			ensureDiscoverable();
-			connectionAddress = deviceAddresses[GOGGLES_INDEX];
 			initiateSocketServer();
 		}
-		if (deviceType.equals(NEXUS)) {
-			currentDevice = "Nexus";
-			//make sure server is visible
-			ensureDiscoverable();
-			connectionAddress = deviceAddresses[GOGGLES_INDEX];
-			if (D)
-				Log.i("debugging", "connecting to address: "
-						+ connectionAddress);
-			initiateSocketServer();
-		}
-		if (deviceType.equals(GOGGLES)) {
-			if (arduino){
-				connectionAddress = deviceAddresses[ARDUINO_INDEX];
-				TextView whoSays=(TextView)findViewById(R.id.who_says);
-				whoSays.setText("Arduino says:");
-			}
-			else {
-				connectionAddress = deviceAddresses[NEXUS_INDEX];
-			}
-			currentDevice = "Goggles";
-			if (D)
-				Log.i("debugging", "connecting to address: "
-						+ connectionAddress);
-			initiateClient();
-		}
-		if (deviceType.equals(GLASS)){
-			if (D)
-				Log.i("debugging", "device type is glass");
-			currentDevice = "Glass";
-			if (arduino){
-				connectionAddress = deviceAddresses[ARDUINO_INDEX];
-			}
-			else {
-				connectionAddress = deviceAddresses[NEXUS_INDEX];
-			}
+		else{
 			initiateClient();
 		}
 	}
@@ -169,6 +131,43 @@ public class MainActivity extends Activity {
 		deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
 		deviceAddresses[ARDUINO_INDEX] = "00:A0:96:13:58:5E";
 	
+
+		if (deviceType.equals(DROIDX)) {
+			currentDevice = "DroidX";
+			isServer=true;
+			//make sure server is visible
+			connectionAddress = deviceAddresses[GOGGLES_INDEX];
+			
+		}
+		if (deviceType.equals(NEXUS)) {
+			isServer=true;
+			currentDevice = "Nexus";
+			//make sure server is visible
+			connectionAddress = deviceAddresses[GOGGLES_INDEX];
+		}
+		if (deviceType.equals(GOGGLES)) {
+			if (arduino){
+				connectionAddress = deviceAddresses[ARDUINO_INDEX];
+				TextView whoSays=(TextView)findViewById(R.id.who_says);
+				whoSays.setText("Arduino says:");
+			}
+			else {
+				connectionAddress = deviceAddresses[NEXUS_INDEX];
+			}
+			currentDevice = "Goggles";
+
+		}
+		if (deviceType.equals(GLASS)){
+			if (D)
+				Log.i("debugging", "device type is glass");
+			currentDevice = "Glass";
+			if (arduino){
+				connectionAddress = deviceAddresses[ARDUINO_INDEX];
+			}
+			else {
+				connectionAddress = deviceAddresses[NEXUS_INDEX];
+			}
+		}
 
 		start();
 		
