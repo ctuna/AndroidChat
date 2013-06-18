@@ -8,8 +8,6 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
-//import com.example.android.BluetoothChat.BluetoothChatService.AcceptThread;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -27,11 +25,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+//import com.example.android.BluetoothChat.BluetoothChatService.AcceptThread;
 //from http://www.drdobbs.com/tools/hacking-for-fun-programming-a-wearable-a/240007471
 // MAC Address:	e4:ce:8f:37:44:4e
 
@@ -43,7 +40,7 @@ public class MainActivity extends Activity {
 	Button blueButton;
 	Button orangeButton;
 	BluetoothSocket mmSocket = null;
-	Boolean arduino = false;
+	Boolean arduino = true;
 	private boolean taskComplete = false;
 	// private static final UUID MY_UUID =
 	// UUID.fromString("00001105-0000-1000-8000-00805F9B34FB");
@@ -88,14 +85,23 @@ public class MainActivity extends Activity {
 		if (D)
 			Log.i("debugging", "CURRENT DEVICE IS: "+ android.os.Build.DEVICE);
 		enableBlueTooth();
+		
 		registerDevices();
-
+		
+		
 		if (currentDevice.equals("Goggles")) {
 			setContentView(R.layout.goggles_main);
 			
 		} else {
 			setContentView(R.layout.activity_main);
 		}
+		
+		if (arduino){
+			TextView whoSays=(TextView)findViewById(R.id.who_says);
+			whoSays.setText("Arduino says:");
+		}
+
+
 		blueButton= (Button)findViewById(R.id.blue_button);
 		blueButton.setOnClickListener(blueListener);
 		orangeButton= (Button)findViewById(R.id.orange_button);
@@ -125,6 +131,7 @@ public class MainActivity extends Activity {
 	}
 	
 	public void registerDevices() {
+		Log.i("debugging", "in my code");
 		deviceAddresses[LAPTOP_INDEX] = "E4:CE:8F:37:44:4F";
 		deviceAddresses[DROIDX_INDEX] = "D0:37:61:40:1F:F2";
 		deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
@@ -148,8 +155,6 @@ public class MainActivity extends Activity {
 		if (deviceType.equals(GOGGLES)) {
 			if (arduino){
 				connectionAddress = deviceAddresses[ARDUINO_INDEX];
-				TextView whoSays=(TextView)findViewById(R.id.who_says);
-				whoSays.setText("Arduino says:");
 			}
 			else {
 				connectionAddress = deviceAddresses[NEXUS_INDEX];
@@ -162,9 +167,11 @@ public class MainActivity extends Activity {
 				Log.i("debugging", "device type is glass");
 			currentDevice = "Glass";
 			if (arduino){
+				Log.i("debugging", "connecting to arduino");
 				connectionAddress = deviceAddresses[ARDUINO_INDEX];
 			}
 			else {
+				Log.i("debugging", "connecting to nexy");
 				connectionAddress = deviceAddresses[NEXUS_INDEX];
 			}
 		}
@@ -201,7 +208,7 @@ public class MainActivity extends Activity {
 		if (mBluetoothAdapter.isDiscovering()) {
 			if (D)
 				Log.i("debugging", "canceled discovery in initiateClient");
-			mBluetoothAdapter.cancelDiscovery();
+			//mBluetoothAdapter.cancelDiscovery();
 		}
 
 	}
@@ -470,6 +477,8 @@ public class MainActivity extends Activity {
 					// startConnectionThread();
 				} catch (IOException e) {
 					Log.i("debugging", "exception in AcceptThread.run()");
+					Toast toast = Toast.makeText(getApplicationContext(), "the client never came to the party", Toast.LENGTH_SHORT);
+					toast.show();
 					e.printStackTrace();
 					break;
 				}
@@ -581,7 +590,8 @@ public class MainActivity extends Activity {
 			} catch (IOException connectException) {
 				// Unable to connect; close the socket and get out
 				Log.i("debugging", "unable to connect in ConnectThread.run");
-				connectException.printStackTrace();
+				Toast toast = Toast.makeText(getApplicationContext(), "the server is not available", Toast.LENGTH_SHORT);
+				toast.show();
 				try {
 					mmSocket.close();
 				} catch (IOException closeException) {
