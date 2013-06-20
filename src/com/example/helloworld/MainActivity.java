@@ -76,6 +76,7 @@ public class MainActivity extends Activity {
 	private static final int DROIDX_INDEX = 1;
 	private static final int GOGGLES_INDEX = 2;
 	private static final int ARDUINO_INDEX=3;
+	private static final int SEAN_INDEX=4;
 	private static final int NEXUS_INDEX = 6;
 	private String connectionAddress;
 
@@ -162,6 +163,7 @@ public class MainActivity extends Activity {
 		deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
 		deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
 		deviceAddresses[ARDUINO_INDEX] = "00:A0:96:13:58:5E";
+		deviceAddresses[SEAN_INDEX] = "B8:F6:B1:19:5F:68";
 	
 
 		if (deviceType.equals(DROIDX)) {
