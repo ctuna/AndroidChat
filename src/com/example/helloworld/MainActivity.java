@@ -31,11 +31,15 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+
 //import com.example.android.BluetoothChat.BluetoothChatService.AcceptThread;
 //from http://www.drdobbs.com/tools/hacking-for-fun-programming-a-wearable-a/240007471
 // MAC Address:	e4:ce:8f:37:44:4e
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements GestureDetector.OnGestureListener{
 	MainActivity master = this;
 	int REQUEST_ENABLE_BT;
 	BluetoothAdapter mBluetoothAdapter;
@@ -43,7 +47,7 @@ public class MainActivity extends Activity {
 	Button blueButton;
 	Button orangeButton;
 	BluetoothSocket mmSocket = null;
-	Boolean arduino = false;
+	Boolean arduino = true;
 	private boolean taskComplete = false;
 	// private static final UUID MY_UUID =
 	// UUID.fromString("00001105-0000-1000-8000-00805F9B34FB");
@@ -84,9 +88,13 @@ public class MainActivity extends Activity {
 	public boolean isPhone = true;
 	public boolean isServer = false;
 	TextView whoSays;
+	GestureDetector gestureDetector;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		gestureDetector = new GestureDetector(this, this);
 		
 		if (D)
 			Log.i("debugging", "CURRENT DEVICE IS: "+ android.os.Build.DEVICE);
@@ -883,5 +891,69 @@ public class MainActivity extends Activity {
         
         }
     }
+
+    //==================== gesture detection ========================
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+        Log.v("Gesture", event.toString());
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("Gesture", "onBackPressed");
+        Toast.makeText(getApplicationContext(), "Go Back", Toast.LENGTH_SHORT).show();
+    }
+    
+	@Override
+	public boolean onDown(MotionEvent e) {
+		Log.d("Gesture", "onDown");
+		return false;
+	}
+
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		Log.d("Gesture", "onFling: velocityX:" + velocityX + " velocityY:" + velocityY);
+	    if (velocityX < -3500) {
+	        Toast.makeText(getApplicationContext(), "Fling Right", Toast.LENGTH_SHORT).show();
+	    } else if (velocityX > 3500) {
+	        Toast.makeText(getApplicationContext(), "Fling Left", Toast.LENGTH_SHORT).show();
+	    }
+		return false;
+	}
+
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		Log.d("Gesture", "onLongPress");
+		
+	}
+
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		Log.v("Gesture", "onScroll: distanceX:" + distanceX + " distanceY:" + distanceY);
+	    
+		return false;
+	}
+
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		Log.d("Gesture", "onShowPress");
+	
+		
+	}
+
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		Log.d("Gesture", "onSingleTapUp");
+		return false;
+	}
 
 }
