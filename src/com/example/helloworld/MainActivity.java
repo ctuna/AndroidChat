@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +41,7 @@ public class MainActivity extends Activity {
 	Button blueButton;
 	Button orangeButton;
 	BluetoothSocket mmSocket = null;
-	Boolean arduino = true;
+	Boolean arduino = false;
 	private boolean taskComplete = false;
 	// private static final UUID MY_UUID =
 	// UUID.fromString("00001105-0000-1000-8000-00805F9B34FB");
@@ -79,9 +80,11 @@ public class MainActivity extends Activity {
 	public int messageIndex = 0;
 	public boolean isPhone = true;
 	public boolean isServer = false;
+	TextView whoSays;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		if (D)
 			Log.i("debugging", "CURRENT DEVICE IS: "+ android.os.Build.DEVICE);
 		enableBlueTooth();
@@ -91,21 +94,31 @@ public class MainActivity extends Activity {
 		
 		if (currentDevice.equals("Goggles")) {
 			setContentView(R.layout.goggles_main);
+			//whoSays =(TextView)findViewById(R.id.who_says);
+			//Log.i("debugging", "setting text");
+			//whoSays.setText(mmSocket.getRemoteDevice().getName());
 			
 		} else {
+			Log.i("debugging", "set content view");
 			setContentView(R.layout.activity_main);
+			//whoSays =(TextView)findViewById(R.id.who_says);
+			//Log.i("debugging", "setting text");
+			//whoSays.setText(mmSocket.getRemoteDevice().getName());
+			
 		}
 		
-		if (arduino){
-			TextView whoSays=(TextView)findViewById(R.id.who_says);
-			whoSays.setText("Arduino says:");
-		}
-
-
+		
 		blueButton= (Button)findViewById(R.id.blue_button);
 		blueButton.setOnClickListener(blueListener);
+		if (!currentDevice.equals("Glass")){
+			((TextView)findViewById(R.id.who_says)).setTextSize(40);
+			((TextView)findViewById(R.id.incoming_message)).setTextSize(40);
+		}
+		//blueButton.setOnFocusChangeListener(blueFocusListener);
+		//orangeButton.setOnFocusChangeListener(orangeFocusListener);
 		orangeButton= (Button)findViewById(R.id.orange_button);
 		orangeButton.setOnClickListener(orangeListener);
+		
 		
 		if (D)
 			Log.i("debugging", "bluetooth enabled");
@@ -113,6 +126,8 @@ public class MainActivity extends Activity {
 
 		incomingMessage = (TextView) findViewById(R.id.incoming_message);
 	}
+	
+	
 
 	public ConnectedThread connectedThread;
 
@@ -272,6 +287,36 @@ public class MainActivity extends Activity {
 	};
 
 
+	
+	OnFocusChangeListener orangeFocusListener = new OnFocusChangeListener() {
+
+		@Override
+		public void onFocusChange(View arg0, boolean focused) {
+			// TODO Auto-generated method stub
+			if (focused){
+				if (taskComplete) {
+					Log.i("debugging", "clicked");
+					try {
+						mmOutputStream = mmSocket.getOutputStream();
+						messageIndex++;
+						String msg = "orange";
+
+						byte[] send = msg.getBytes();
+						mConnectedThread.write(send);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		}
+		}
+
+		
+
+	};
+
+	
+	
 	OnClickListener blueListener = new OnClickListener() {
 
 		@Override
@@ -297,7 +342,30 @@ public class MainActivity extends Activity {
 	};
 
 
+	OnFocusChangeListener blueFocusListener = new OnFocusChangeListener() {
 
+		@Override
+		public void onFocusChange(View arg0, boolean focused) {
+			// TODO Auto-generated method stub
+			if (focused){
+				if (taskComplete) {
+					Log.i("debugging", "clicked");
+					try {
+						mmOutputStream = mmSocket.getOutputStream();
+						messageIndex++;
+						String msg = "blue";
+						byte[] send = msg.getBytes();
+						mConnectedThread.write(send);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		}
+
+		}
+
+	};
 
 
 
@@ -623,6 +691,10 @@ public class MainActivity extends Activity {
 		public ConnectedThread(BluetoothSocket socket) {
 			mConnectedThread = this;
 			mmSocket = socket;
+			
+			
+		
+			
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
 
@@ -782,6 +854,9 @@ public class MainActivity extends Activity {
 		if (D)
 			Log.i("debugging", "Starting connected thread");
 		mConnectedThread.start();
+		Log.i("debugging", "name of socket device is: " + mmSocket.getRemoteDevice().getName());
+		//whoSays.setText(mmSocket.getRemoteDevice().getName());
+		
 	}
 	
 	

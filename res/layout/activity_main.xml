@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:layout_margin="20dp"
+    android:layout_margin="10dp"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp"
@@ -17,20 +17,18 @@
         android:layout_weight=".25">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="Goggles say: "
-            android:textColor="@android:color/darker_gray"
-            android:textSize="50sp" />
+        android:id="@+id/who_says"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="he said:"/>
 
         <TextView
         android:id="@+id/incoming_message"
         android:layout_marginLeft="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textSize="50sp"
+        android:textSize="20sp"
         android:text="" />
 	</LinearLayout>
     
@@ -45,7 +43,7 @@
         android:layout_marginRight="10dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight=".25"
+        android:layout_weight=".375"
         android:background="@drawable/button_blue"
         android:text="" />
    
@@ -53,7 +51,7 @@
         android:id="@+id/orange_button"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight=".25"
+        android:layout_weight=".375"
         android:background="@drawable/button_orange"
         android:text="" />
         
