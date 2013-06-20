@@ -922,6 +922,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	    } else if (velocityX > 3500) {
 	        Toast.makeText(getApplicationContext(), "Fling Left", Toast.LENGTH_SHORT).show();
 	    }
+	    if(velocityY < -500 && velocityX < 1500 && velocityX > -1500) {
+	    	Log.d("Gesture", "Fling Up");
+	    }
 		return false;
 	}
 
@@ -936,7 +939,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
-		Log.v("Gesture", "onScroll: distanceX:" + distanceX + " distanceY:" + distanceY);
+		Log.d("Gesture", "onScroll: distanceX:" + distanceX + " distanceY:" + distanceY);
 	    
 		return false;
 	}
