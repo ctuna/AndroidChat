@@ -17,6 +17,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -106,7 +108,7 @@ public class MainActivity extends Activity {
 			//whoSays.setText(mmSocket.getRemoteDevice().getName());
 			
 		}
-		
+		checkSensors();
 		
 		blueButton= (Button)findViewById(R.id.blue_button);
 		blueButton.setOnClickListener(blueListener);
@@ -128,7 +130,15 @@ public class MainActivity extends Activity {
 	}
 	
 	
-
+	public void checkSensors(){
+		if (D){
+		Log.i("debugging", "Sensors available include: ");
+		SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		for (Sensor s: sensorManager.getSensorList(Sensor.TYPE_ALL)){
+			Log.i("debugging", " " + s.getName());
+		}
+		}
+	}
 	public ConnectedThread connectedThread;
 
 	public void startConnectionThread() {
