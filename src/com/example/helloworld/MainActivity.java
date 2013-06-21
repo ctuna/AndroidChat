@@ -29,6 +29,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 //import com.example.android.BluetoothChat.BluetoothChatService.AcceptThread;
@@ -44,6 +47,11 @@ public class MainActivity extends Activity {
 	Button orangeButton;
 	BluetoothSocket mmSocket = null;
 	Boolean arduino = false;
+	Boolean isController = false;
+	Boolean isControlled = false;
+	
+	//Activities: blue/red screen vs. knob 
+	
 	private boolean taskComplete = false;
 	// private static final UUID MY_UUID =
 	// UUID.fromString("00001105-0000-1000-8000-00805F9B34FB");
@@ -80,7 +88,7 @@ public class MainActivity extends Activity {
 	private String connectionAddress;
 
 	public int messageIndex = 0;
-	public boolean isPhone = true;
+	//public boolean isPhone = true;
 	public boolean isServer = false;
 	TextView whoSays;
 	@Override
@@ -101,33 +109,46 @@ public class MainActivity extends Activity {
 			//whoSays.setText(mmSocket.getRemoteDevice().getName());
 			
 		} else {
-			Log.i("debugging", "set content view");
+			if (isController){
+				setContentView(R.layout.controller);
+				SeekBar slider = (SeekBar)findViewById(R.id.slider);
+				slider.setOnSeekBarChangeListener(seekBarListener);
+			}
+			else if (isControlled){
+				setContentView(R.layout.controller_target);
+				
+			}
+			else {
+				//DEFAULT BEHAVIOR
 			setContentView(R.layout.activity_main);
+			blueButton= (Button)findViewById(R.id.blue_button);
+			blueButton.setOnClickListener(blueListener);
+			if (!currentDevice.equals("Glass")){
+				((TextView)findViewById(R.id.who_says)).setTextSize(40);
+				((TextView)findViewById(R.id.incoming_message)).setTextSize(40);
+			}
+			//blueButton.setOnFocusChangeListener(blueFocusListener);
+			//orangeButton.setOnFocusChangeListener(orangeFocusListener);
+			orangeButton= (Button)findViewById(R.id.orange_button);
+			orangeButton.setOnClickListener(orangeListener);
 			//whoSays =(TextView)findViewById(R.id.who_says);
 			//Log.i("debugging", "setting text");
 			//whoSays.setText(mmSocket.getRemoteDevice().getName());
-			
+
+			incomingMessage = (TextView) findViewById(R.id.incoming_message);
 		}
-		checkSensors();
-		
-		blueButton= (Button)findViewById(R.id.blue_button);
-		blueButton.setOnClickListener(blueListener);
-		if (!currentDevice.equals("Glass")){
-			((TextView)findViewById(R.id.who_says)).setTextSize(40);
-			((TextView)findViewById(R.id.incoming_message)).setTextSize(40);
-		}
-		//blueButton.setOnFocusChangeListener(blueFocusListener);
-		//orangeButton.setOnFocusChangeListener(orangeFocusListener);
-		orangeButton= (Button)findViewById(R.id.orange_button);
-		orangeButton.setOnClickListener(orangeListener);
+		//checkSensors();
 		
 		
 		if (D)
 			Log.i("debugging", "bluetooth enabled");
 		//registerDevices();
 
-		incomingMessage = (TextView) findViewById(R.id.incoming_message);
-	}
+		}
+		}
+	
+	
+	
 	
 	
 	public void checkSensors(){
@@ -139,6 +160,7 @@ public class MainActivity extends Activity {
 		}
 		}
 	}
+	
 	public ConnectedThread connectedThread;
 
 	public void startConnectionThread() {
@@ -166,13 +188,15 @@ public class MainActivity extends Activity {
 
 		if (deviceType.equals(DROIDX)) {
 			currentDevice = "DroidX";
-			isServer=true;
+			//isServer=false;
+			isController = true;
 			//make sure server is visible
-			connectionAddress = deviceAddresses[GOGGLES_INDEX];
+			connectionAddress = deviceAddresses[NEXUS_INDEX];
 			
 		}
 		if (deviceType.equals(NEXUS)) {
 			isServer=true;
+			isControlled=true;
 			currentDevice = "Nexus";
 			//make sure server is visible
 			connectionAddress = deviceAddresses[GOGGLES_INDEX];
@@ -248,6 +272,43 @@ public class MainActivity extends Activity {
 	OutputStream mmOutputStream;
 	InputStream mmInputStream;
 
+	
+	OnSeekBarChangeListener seekBarListener = new OnSeekBarChangeListener(){
+
+		@Override
+		public void onProgressChanged(SeekBar arg0, int seekValue, boolean arg2) {
+			// TODO Auto-generated method stub
+			if (taskComplete) {
+				Log.i("debugging", "clicked");
+				try {
+					mmOutputStream = mmSocket.getOutputStream();
+					messageIndex++;
+					String msg = Integer.toString(seekValue);
+					byte[] send = msg.getBytes();
+					mConnectedThread.write(send);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+		
+
+		@Override
+		public void onStartTrackingTouch(SeekBar arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+	
 	OnClickListener sendListener = new OnClickListener() {
 
 		@Override
@@ -817,13 +878,24 @@ public class MainActivity extends Activity {
 				byte[] readBuf = (byte[]) msg.obj;
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
-				if (readMessage.equals("blue")){
-					incomingMessage.setTextColor(getResources().getColor(R.color.sky_light));
+			
+				if (isControlled){
+					LinearLayout mLayout = (LinearLayout) findViewById(R.id.progress);
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Integer.parseInt(readMessage)*3);
+					mLayout.setLayoutParams(params);
+					
 				}
-				if (readMessage.equals("orange")){
-					incomingMessage.setTextColor(getResources().getColor(R.color.tangerine_light));
+				else{
+					if (readMessage.equals("blue")){
+						incomingMessage.setTextColor(getResources().getColor(R.color.sky_light));
+					}
+					if (readMessage.equals("orange")){
+						incomingMessage.setTextColor(getResources().getColor(R.color.tangerine_light));
+					}
+					incomingMessage.setText(readMessage);
 				}
-				incomingMessage.setText(readMessage);
+				
+				
 				break;
 
 			}

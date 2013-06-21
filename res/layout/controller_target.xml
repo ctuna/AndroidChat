@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom" >
+
+    <TextView
+        android:id="@+id/incoming_message"
+        android:layout_width="wrap_content"
+        android:layout_weight=".5"
+        android:layout_height="0dp"
+        android:text="TextView" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        android:gravity="bottom"
+        android:orientation="vertical" >
+        
+        <LinearLayout
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/sky_light"
+        android:orientation="vertical"
+        >
+        
+    </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
