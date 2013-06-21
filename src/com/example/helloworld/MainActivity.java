@@ -8,8 +8,6 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,13 +18,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -38,9 +40,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import com.example.android.BluetoothChat.BluetoothChatService.AcceptThread;
 //from http://www.drdobbs.com/tools/hacking-for-fun-programming-a-wearable-a/240007471
-// MAC Address:	e4:ce:8f:37:44:4e
+// MAC Address:	e4:ce:8f:37:44:4e   
 
-public class MainActivity extends Activity implements GestureDetector.OnGestureListener{
+public class MainActivity extends Activity implements GestureDetector.OnGestureListener, SensorEventListener{
 	MainActivity master = this;
 	int REQUEST_ENABLE_BT;
 	BluetoothAdapter mBluetoothAdapter;
@@ -141,11 +143,10 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
 			incomingMessage = (TextView) findViewById(R.id.incoming_message);
 		}
-		//checkSensors();
+		Log.i("debugging", "hello anyone");
+		checkSensors();
 		
 		
-		if (D)
-			Log.i("debugging", "bluetooth enabled");
 		//registerDevices();
 
 		}
@@ -153,17 +154,37 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	
 	
 	
-	
-	
+
+	SensorManager mSensorManager;
+	Sensor orientationSensor;
+	Sensor gravitySensor;
+	SensorEventListener gravityListener;
+	SensorEventListener orientationListener;
 	public void checkSensors(){
-		if (D){
+
+		mSensorManager= (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		Log.i("debugging", "Sensors available include: ");
 		SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		gravitySensor=sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+		
+		sensorManager.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
 		for (Sensor s: sensorManager.getSensorList(Sensor.TYPE_ALL)){
 			Log.i("debugging", " " + s.getName());
-		}
+			if (s.getName().equals("MPL Orientation")){
+				orientationSensor= s ;
+			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public ConnectedThread connectedThread;
 
@@ -966,19 +987,19 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
-        Log.v("Gesture", event.toString());
+       // Log.i("Gesture", event.toString());
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        Log.d("Gesture", "onBackPressed");
+        Log.i("Gesture", "onBackPressed");
         Toast.makeText(getApplicationContext(), "Go Back", Toast.LENGTH_SHORT).show();
     }
     
 	@Override
 	public boolean onDown(MotionEvent e) {
-		Log.d("Gesture", "onDown");
+		Log.i("Gesture", "onDown");
 		return false;
 	}
 
@@ -986,7 +1007,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		Log.d("Gesture", "onFling: velocityX:" + velocityX + " velocityY:" + velocityY);
+		Log.i("Gesture", "onFling: velocityX:" + velocityX + " velocityY:" + velocityY);
 	    if (velocityX < -3500) {
 	        Toast.makeText(getApplicationContext(), "Fling Right", Toast.LENGTH_SHORT).show();
 	    } else if (velocityX > 3500) {
@@ -998,7 +1019,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
 	@Override
 	public void onLongPress(MotionEvent e) {
-		Log.d("Gesture", "onLongPress");
+		Log.i("Gesture", "onLongPress");
 
 	}
 
@@ -1006,15 +1027,20 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
-		Log.v("Gesture", "onScroll: distanceX:" + distanceX + " distanceY:" + distanceY);
-
-		return false;
+		
+		if (distanceX < 0){
+			Log.i("Gesture", "onScroll going forward");	
+		}
+		else {
+			Log.i("Gesture", "onScroll going back");	
+		}
+		return true;
 	}
 
 
 	@Override
 	public void onShowPress(MotionEvent e) {
-		Log.d("Gesture", "onShowPress");
+		Log.i("Gesture", "onShowPress");
 
 
 	}
@@ -1022,8 +1048,31 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		Log.d("Gesture", "onSingleTapUp");
+		Log.i("Gesture", "onSingleTapUp");
 		return false;
 	}
+
+	 
+	  @Override
+	  public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+	    // Do something here if sensor accuracy changes.
+	  }
+
+	  @Override
+	  public final void onSensorChanged(SensorEvent event) {
+	    // The light sensor returns a single value.
+	    // Many sensors return 3 values, one for each axis.
+		  float lux = event.values[0];
+		  Log.i("debugging", "sensor type is: "+ event.sensor.getName() + ": " + lux);
+		
+		int currentSensor = event.sensor.getType();
+		if (currentSensor== Sensor.TYPE_GRAVITY){
+
+			Log.i("debugging", "sensor type is: "+ event.sensor.getName() + ": " + lux);
+		}
+	
+	   
+	    // Do something with this sensor value.
+	  }
 
 }
