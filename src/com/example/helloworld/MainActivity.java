@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -38,7 +40,7 @@ import android.widget.Toast;
 //from http://www.drdobbs.com/tools/hacking-for-fun-programming-a-wearable-a/240007471
 // MAC Address:	e4:ce:8f:37:44:4e
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements GestureDetector.OnGestureListener{
 	MainActivity master = this;
 	int REQUEST_ENABLE_BT;
 	BluetoothAdapter mBluetoothAdapter;
@@ -91,6 +93,8 @@ public class MainActivity extends Activity {
 	//public boolean isPhone = true;
 	public boolean isServer = false;
 	TextView whoSays;
+	GestureDetector gestureDetector;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,7 +102,7 @@ public class MainActivity extends Activity {
 		if (D)
 			Log.i("debugging", "CURRENT DEVICE IS: "+ android.os.Build.DEVICE);
 		enableBlueTooth();
-		
+		gestureDetector = new GestureDetector(this, this);
 		registerDevices();
 		
 		
@@ -953,5 +957,73 @@ public class MainActivity extends Activity {
         
         }
     }
+
+
+
+
+
+  //==================== gesture detection ========================
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+        Log.v("Gesture", event.toString());
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("Gesture", "onBackPressed");
+        Toast.makeText(getApplicationContext(), "Go Back", Toast.LENGTH_SHORT).show();
+    }
+    
+	@Override
+	public boolean onDown(MotionEvent e) {
+		Log.d("Gesture", "onDown");
+		return false;
+	}
+
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		Log.d("Gesture", "onFling: velocityX:" + velocityX + " velocityY:" + velocityY);
+	    if (velocityX < -3500) {
+	        Toast.makeText(getApplicationContext(), "Fling Right", Toast.LENGTH_SHORT).show();
+	    } else if (velocityX > 3500) {
+	        Toast.makeText(getApplicationContext(), "Fling Left", Toast.LENGTH_SHORT).show();
+	    }
+		return false;
+	}
+
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		Log.d("Gesture", "onLongPress");
+
+	}
+
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		Log.v("Gesture", "onScroll: distanceX:" + distanceX + " distanceY:" + distanceY);
+
+		return false;
+	}
+
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		Log.d("Gesture", "onShowPress");
+
+
+	}
+
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		Log.d("Gesture", "onSingleTapUp");
+		return false;
+	}
 
 }
