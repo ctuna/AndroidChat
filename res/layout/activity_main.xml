@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:text="he said:"/>
+        android:text="status:"/>
 
         <TextView
         android:id="@+id/incoming_message"
@@ -29,7 +29,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:text="" />
+        android:text="not connected" />
 	</LinearLayout>
     
 
@@ -38,22 +38,6 @@
         android:layout_width = "fill_parent"
         android:layout_height="0dp"
         android:layout_weight=".75">
-    <Button
-        android:id="@+id/blue_button"
-        android:layout_marginRight="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight=".375"
-        android:background="@drawable/button_blue"
-        android:text="" />
-   
-    <Button
-        android:id="@+id/orange_button"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight=".375"
-        android:background="@drawable/button_orange"
-        android:text="" />
         
     </LinearLayout>
     

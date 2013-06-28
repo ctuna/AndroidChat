@@ -131,16 +131,16 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             else {
                 //DEFAULT BEHAVIOR
                 setContentView(R.layout.activity_main);
-                blueButton= (Button)findViewById(R.id.blue_button);
-                blueButton.setOnClickListener(blueListener);
+                //blueButton= (Button)findViewById(R.id.blue_button);
+                //blueButton.setOnClickListener(blueListener);
                 if (!currentDevice.equals("Glass")){
                     ((TextView)findViewById(R.id.who_says)).setTextSize(40);
                     ((TextView)findViewById(R.id.incoming_message)).setTextSize(40);
                 }
                 //blueButton.setOnFocusChangeListener(blueFocusListener);
                 //orangeButton.setOnFocusChangeListener(orangeFocusListener);
-                orangeButton= (Button)findViewById(R.id.orange_button);
-                orangeButton.setOnClickListener(orangeListener);
+                //orangeButton= (Button)findViewById(R.id.orange_button);
+                //orangeButton.setOnClickListener(orangeListener);
                 //whoSays =(TextView)findViewById(R.id.who_says);
                 //Log.i("debugging", "setting text");
                 //whoSays.setText(mmSocket.getRemoteDevice().getName());
@@ -813,6 +813,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                 return;
             }
             Log.i("debugging", "SUCCESSFULLY CONNECTED");
+            incomingMessage.setText("connected");
 
             connected(mmSocket);
             // Do work to manage the connection (in a separate thread)
@@ -922,8 +923,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume() */
     public synchronized void restartConnection() {
-        if (D) Log.i("debugging", "restarting connection (doesn't make sense");
-
+        if (D) Log.i("debugging", "restarting connection ");
+        incomingMessage.setText("not connected");
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
 
