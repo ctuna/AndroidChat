@@ -85,7 +85,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     private String currentDevice;
 
     private String[] deviceAddresses = new String[7];
-    private static final int LAPTOP_INDEX = 0;
+    private static final int BEN_LAPTOP_INDEX = 0;
+    private static final int CLAIRE_LAPTOP_INDEX = 4;
     private static final int DROIDX_INDEX = 1;
     private static final int GOGGLES_INDEX = 2;
     private static final int ARDUINO_INDEX=3;
@@ -216,7 +217,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     public void registerDevices() {
         Log.i("debugging", "in my code");
         // deviceAddresses[LAPTOP_INDEX] = "E4:CE:8F:37:44:4F";
-        deviceAddresses[LAPTOP_INDEX] = "B8:F6:B1:19:69:70";
+        deviceAddresses[BEN_LAPTOP_INDEX] = "B8:F6:B1:19:69:70";
+        deviceAddresses[CLAIRE_LAPTOP_INDEX]="B8:F6:B1:19:69:70";
         deviceAddresses[DROIDX_INDEX] = "D0:37:61:40:1F:F2";
         deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
         deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
@@ -258,7 +260,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             }
             else if (isConnectingToLaptop){
                 Log.i("debugging", "connecting to ben's laptop");
-                connectionAddress = deviceAddresses[LAPTOP_INDEX];
+                connectionAddress = deviceAddresses[BEN_LAPTOP_INDEX];
             }
             else {
                 Log.i("debugging", "connecting to nexy");
@@ -269,6 +271,22 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         start();
 
 
+    }
+    
+    public void changeConnectionTo(String newConnection){
+        //kill connection
+        
+        //try { mmSocket.close(); } catch (IOException e) {e.printStackTrace(); }
+        //this.onDestroy();
+        if (newConnection.equals("right")){
+            Log.i("debugging", "connecting to right");
+            connectionAddress = deviceAddresses[BEN_LAPTOP_INDEX];
+        }
+        else{
+            Log.i("debugging", "connecting to left");
+            connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
+        }
+        restartConnection();
     }
 
     @Override
@@ -592,8 +610,10 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
     public void onDestroy() {
         super.onDestroy();
-
-        if (mReceiver!=null) unregisterReceiver(mReceiver);
+        if (registered){
+            if (mReceiver!=null) unregisterReceiver(mReceiver);
+        }
+       
         if (mmSocket != null) {
             try {
                 mmSocket.close();
@@ -770,8 +790,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
                 Log.i("debugging", "unable to connect in ConnectThread.run");
-                Toast toast = Toast.makeText(getApplicationContext(), "the server is not available", Toast.LENGTH_SHORT);
-                toast.show();
+                connectException.printStackTrace();
+                //Toast toast = Toast.makeText(getApplicationContext(), "the server is not available", Toast.LENGTH_SHORT);
+                //toast.show();
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
@@ -1125,16 +1146,35 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             // head moving left yield positive values
             filtered = event.values[1] * alpha + filtered * (1 - alpha);
             headRotation += filtered * SensorManager.SENSOR_DELAY_NORMAL;
-            Log.i("sensor", "rotation is "+ headRotation);
+            rotationEvent();
+            //Log.i("sensor", "rotation is "+ headRotation);
             // Log.i("sensor", "rotation[0] = "+ event.values[0]*10 +" rotation[1] = "+ event.values[1]*10 + " rotation[2] = "+ 10* event.values[2]);
         }
     }
-    public void rotationEvent(float val){
-            Log.i("sensor", "rotation value is " + val);
+    public void rotationEvent(){
+            if (headRotation >threshold){
+                
+                if (!currentSide.equals("left")){
+                    //newly turned to left
+                    Log.i("sensor", "left");
+                    currentSide="left";
+                    changeConnectionTo("left");
+                }
+            }
+            else if (headRotation<(-1*threshold)){
+                if (!currentSide.equals("right")){
+                    //newly turned to right
+                    Log.i("sensor", "right");
+                    currentSide="right";
+                    changeConnectionTo("right");
+                }
+            }
            
     }
     private float headRotation = 0;
     private float alpha = 0.2f;
     private float filtered = 0;
+    private int threshold = 40;
+    private String currentSide="";
             
 }
