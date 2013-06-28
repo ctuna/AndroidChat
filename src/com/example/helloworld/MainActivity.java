@@ -1041,7 +1041,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             float distanceY) {
 
         if (distanceX < 0){
-            Log.i("Gesture", "onScroll going forward");	
+            Log.i("Gesture", "onScroll going forward with distance : " + distanceX);	
         }
         else {
             Log.i("Gesture", "onScroll going back");	
