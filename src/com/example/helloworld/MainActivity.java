@@ -1061,6 +1061,18 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         Log.i("Gesture", "onSingleTapUp");
+        
+        if (taskComplete) {
+            try {
+                mmOutputStream = mmSocket.getOutputStream();
+                String msg = "tap";
+                byte[] send = msg.getBytes();
+                mConnectedThread.write(send);
+            } catch (IOException d) {
+                d.printStackTrace();
+            }
+
+        }
         return false;
     }
 
