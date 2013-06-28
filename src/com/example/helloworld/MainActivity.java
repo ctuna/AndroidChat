@@ -1115,16 +1115,26 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             //Log.i("debugging", "sensor type is: "+ event.sensor.getName() + ": " + lux);
         }
         if (currentSensor == Sensor.TYPE_ROTATION_VECTOR){
-                rotationEvent(lux);
+               // rotationEvent(lux);
                 
         	//Log.i("sensor", "rotation[0] = "+ event.values[0] +"rotation[1] = "+ event.values[1] + "rotation[2] = "+ event.values[2]);
         }
         if (currentSensor == Sensor.TYPE_GYROSCOPE){
-            rotationEvent(lux);
-            }
+            // a simple rotation calculation for google glass
+            // exponential damping filter + integration on gyro readings
+            // head moving left yield positive values
+            filtered = event.values[1] * alpha + filtered * (1 - alpha);
+            headRotation += filtered * SensorManager.SENSOR_DELAY_NORMAL;
+            Log.i("sensor", "rotation is "+ headRotation);
+            // Log.i("sensor", "rotation[0] = "+ event.values[0]*10 +" rotation[1] = "+ event.values[1]*10 + " rotation[2] = "+ 10* event.values[2]);
+        }
     }
     public void rotationEvent(float val){
             Log.i("sensor", "rotation value is " + val);
            
     }
+    private float headRotation = 0;
+    private float alpha = 0.2f;
+    private float filtered = 0;
+            
 }
