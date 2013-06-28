@@ -144,8 +144,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                 //whoSays =(TextView)findViewById(R.id.who_says);
                 //Log.i("debugging", "setting text");
                 //whoSays.setText(mmSocket.getRemoteDevice().getName());
-
                 incomingMessage = (TextView) findViewById(R.id.incoming_message);
+                
             }
             Log.i("debugging", "hello anyone");
             checkSensors();
@@ -263,8 +263,10 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             	if (!isUsingBoth){
             		connectionAddress= deviceAddresses[BEN_LAPTOP_INDEX];
             	}
-                Log.i("debugging", "connecting to ben's laptop");
-                connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
+            	else {
+
+            	    connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
+            	}
             }
             else {
                 Log.i("debugging", "connecting to nexy");
@@ -813,7 +815,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                 return;
             }
             Log.i("debugging", "SUCCESSFULLY CONNECTED");
-            incomingMessage.setText("connected");
+            //incomingMessage.setText("connected");
 
             connected(mmSocket);
             // Do work to manage the connection (in a separate thread)
@@ -924,7 +926,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
      * session in listening (server) mode. Called by the Activity onResume() */
     public synchronized void restartConnection() {
         if (D) Log.i("debugging", "restarting connection ");
-        incomingMessage.setText("not connected");
+        //incomingMessage.setText("not connected");
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
 
