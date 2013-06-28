@@ -1039,12 +1039,25 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
             float distanceY) {
-
+    	String msg;
         if (distanceX < 0){
+        	msg = "u\n";
             Log.i("Gesture", "onScroll going forward with distance : " + distanceX);	
         }
         else {
+        	msg = "d\n";
             Log.i("Gesture", "onScroll going back");	
+        }
+        
+        if (taskComplete) {
+            try {
+                mmOutputStream = mmSocket.getOutputStream(); 
+                byte[] send = msg.getBytes();
+                mConnectedThread.write(send);
+            } catch (IOException d) {
+                d.printStackTrace();
+            }
+
         }
         return true;
     }
@@ -1065,7 +1078,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         if (taskComplete) {
             try {
                 mmOutputStream = mmSocket.getOutputStream();
-                String msg = "tap";
+                String msg = "p\n";
                 byte[] send = msg.getBytes();
                 mConnectedThread.write(send);
             } catch (IOException d) {
