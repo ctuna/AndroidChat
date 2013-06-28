@@ -53,7 +53,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     Boolean isConnectingToArduino = false;
     Boolean isController = false;
     Boolean isControlled = false;
-
+    Boolean isUsingBoth=false;
+    
     //Activities: blue/red screen vs. knob 
 
     private boolean taskComplete = false;
@@ -259,6 +260,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                 connectionAddress = deviceAddresses[ARDUINO_INDEX];
             }
             else if (isConnectingToLaptop){
+            	if (!isUsingBoth){
+            		connectionAddress= deviceAddresses[BEN_LAPTOP_INDEX];
+            	}
                 Log.i("debugging", "connecting to ben's laptop");
                 connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
             }
@@ -1161,6 +1165,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         }
     }
     public void rotationEvent(){
+    		if (isUsingBoth){
             if (headRotation >threshold){
                 
                 if (!currentSide.equals("left")){
@@ -1178,7 +1183,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                     changeConnectionTo("right");
                 }
             }
-           
+    		}
     }
     private float headRotation = 0;
     private float alpha = 0.2f;
