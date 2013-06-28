@@ -1108,6 +1108,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
             //Log.i("debugging", "sensor type is: "+ event.sensor.getName() + ": " + lux);
         }
+        if (currentSensor == Sensor.TYPE_ROTATION_VECTOR){
+        	Log.i("sensor", "rotation[0] = "+ event.values[0] +"rotation[1] = "+ event.values[1] + "rotation[2] = "+ event.values[2]);
+        }
 
 
         // Do something with this sensor value.
