@@ -279,16 +279,25 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         //try { mmSocket.close(); } catch (IOException e) {e.printStackTrace(); }
         //this.onDestroy();
         if (newConnection.equals("right")){
+        	
             Log.i("debugging", "connecting to right");
-            connectionAddress = deviceAddresses[BEN_LAPTOP_INDEX];
+            if (! (connectionAddress == deviceAddresses[BEN_LAPTOP_INDEX])){
+            	connectionAddress = deviceAddresses[BEN_LAPTOP_INDEX];
+            	restartConnection();
+            }
+            
         }
         else{
             Log.i("debugging", "connecting to left");
-            connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
+            if (connectionAddress != deviceAddresses[CLAIRE_LAPTOP_INDEX]){
+            	connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
+            	restartConnection();
+            }
         }
-        restartConnection();
+        
     }
 
+    
     @Override
     public void onStop() {
         super.onStop();
