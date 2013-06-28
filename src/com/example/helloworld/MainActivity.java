@@ -160,6 +160,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     SensorManager mSensorManager;
     Sensor orientationSensor;
     Sensor gravitySensor;
+    Sensor rotationSensor;
     SensorEventListener gravityListener;
     SensorEventListener orientationListener;
     public void checkSensors(){
@@ -168,8 +169,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         Log.i("debugging", "Sensors available include: ");
         SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         gravitySensor=sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-
+        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         sensorManager.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         for (Sensor s: sensorManager.getSensorList(Sensor.TYPE_ALL)){
             Log.i("debugging", " " + s.getName());
             if (s.getName().equals("MPL Orientation")){
@@ -1109,11 +1111,19 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             //Log.i("debugging", "sensor type is: "+ event.sensor.getName() + ": " + lux);
         }
         if (currentSensor == Sensor.TYPE_ROTATION_VECTOR){
-        	Log.i("sensor", "rotation[0] = "+ event.values[0] +"rotation[1] = "+ event.values[1] + "rotation[2] = "+ event.values[2]);
+                rotationEvent(lux);
+                
+        	//Log.i("sensor", "rotation[0] = "+ event.values[0] +"rotation[1] = "+ event.values[1] + "rotation[2] = "+ event.values[2]);
         }
 
 
         // Do something with this sensor value.
     }
-
+    public void rotationEvent(float val){
+        if (first){
+            Log.i("sensor", "rotation value is " + val);
+            first=false;
+        }
+    }
+    public boolean first = true;
 }
