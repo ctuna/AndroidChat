@@ -218,7 +218,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         Log.i("debugging", "in my code");
         // deviceAddresses[LAPTOP_INDEX] = "E4:CE:8F:37:44:4F";
         deviceAddresses[BEN_LAPTOP_INDEX] = "B8:F6:B1:19:69:70";
-        deviceAddresses[CLAIRE_LAPTOP_INDEX]="B8:F6:B1:19:69:70";
+        deviceAddresses[CLAIRE_LAPTOP_INDEX]="E4:CE:8F:37:44:4F";
         deviceAddresses[DROIDX_INDEX] = "D0:37:61:40:1F:F2";
         deviceAddresses[GOGGLES_INDEX] = "64:9C:8E:6B:02:D6";
         deviceAddresses[NEXUS_INDEX] = "10:BF:48:E8:EF:3A";
@@ -260,7 +260,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
             }
             else if (isConnectingToLaptop){
                 Log.i("debugging", "connecting to ben's laptop");
-                connectionAddress = deviceAddresses[BEN_LAPTOP_INDEX];
+                connectionAddress = deviceAddresses[CLAIRE_LAPTOP_INDEX];
             }
             else {
                 Log.i("debugging", "connecting to nexy");
